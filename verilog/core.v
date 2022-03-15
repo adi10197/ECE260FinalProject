@@ -1,6 +1,6 @@
 // Created by prof. Mingu Kang @VVIP Lab in UCSD ECE department
 // Please do not spread this code without permission 
-module core (clk, sum_out, mem_in, out, inst, reset);
+module core (clk, sum_out, mem_in, out, inst, reset, div, acc, fifo_ext_rd);
 
 parameter col = 8;
 parameter bw = 8;
@@ -14,6 +14,9 @@ input  [pr*bw-1:0] mem_in;
 input  clk;
 input  [16:0] inst; 
 input  reset;
+input  div;
+input  acc;
+input  fifo_ext_rd;
 
 wire  [pr*bw-1:0] mac_in;
 wire  [pr*bw-1:0] kmem_out;
@@ -27,6 +30,7 @@ wire  ofifo_rd;
 wire [3:0] qkmem_add;
 wire [3:0] pmem_add;
 
+//wire  [bw_psum*col-1:0] sfp_out;
 wire  qmem_rd;
 wire  qmem_wr; 
 wire  kmem_rd;
@@ -95,12 +99,22 @@ sram_w16 #(.sram_bit(col*bw_psum)) psum_mem_instance (
         .A(pmem_add)
 );
 
-
+sfp_row #(.bw(bw), .bw_psum(bw_psum), .col(col)) sft_instance(
+        .clk(clk), 
+        .acc(acc), 
+        .div(div), 
+        .fifo_ext_rd(fifo_ext_rd), 
+        .sum_in(24'b0), 
+        .sum_out(sum_out), 
+        .sfp_in(pmem_out), 
+        .sfp_out(sfp_out)
+);
 
   //////////// For printing purpose ////////////
   always @(posedge clk) begin
-      if(pmem_wr)
-         $display("Memory write to PSUM mem add %x %x ", pmem_add, pmem_in); 
+        if(pmem_wr) begin
+          $display("Memory write to PSUM mem add %x %x ", pmem_add, pmem_in); 
+        end
   end
 
 

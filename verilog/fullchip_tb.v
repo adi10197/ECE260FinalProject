@@ -26,12 +26,8 @@ integer  K[col-1:0][pr-1:0];
 integer  Q[total_cycle-1:0][pr-1:0];
 integer  result[total_cycle-1:0][col-1:0];
 integer  sum[total_cycle-1:0];
-
+integer  fifo_out[total_cycle-1:0];
 integer i,j,k,t,p,q,s,u, m;
-
-
-
-
 
 reg reset = 1;
 reg clk = 0;
@@ -48,6 +44,7 @@ reg execute = 0;
 reg load = 0;
 reg [3:0] qkmem_add = 0;
 reg [3:0] pmem_add = 0;
+reg acc, div, fifo_ext_rd;
 
 
 assign inst[16] = ofifo_rd;
@@ -62,19 +59,20 @@ assign inst[2] = kmem_wr;
 assign inst[1] = pmem_rd;
 assign inst[0] = pmem_wr;
 
-
-
 reg [bw_psum-1:0] temp5b;
 reg [bw_psum+3:0] temp_sum;
+wire [bw_psum+3:0] sum_out;
 reg [bw_psum*col-1:0] temp16b;
-
-
 
 fullchip #(.bw(bw), .bw_psum(bw_psum), .col(col), .pr(pr)) fullchip_instance (
       .reset(reset),
       .clk(clk), 
       .mem_in(mem_in), 
-      .inst(inst)
+      .inst(inst),
+      .div(div),
+      .acc(acc),
+      .fifo_ext_rd(fifo_ext_rd),
+      .sum_out(sum_out)
 );
 
 
@@ -361,7 +359,54 @@ $display("##### move ofifo to pmem #####");
 ///////////////////////////////////////////
 
 
+ for (q=0; q<10; q=q+1) begin
+    #0.5 clk = 1'b0;   
+    #0.5 clk = 1'b1;   
+ end
 
+
+//////////////// compute golden normalized values////////////
+
+// $display("#############computing golden values for normalization##########")
+//   for(q=0; q<total_cycle; q=q+1) begin
+//     for(t=0;t<col;t=t+1) begin
+//       temp16b = result[q][t];
+//       $display("%40h", result[q][t]);
+//     end
+//   end
+
+////////////////// move from pmem to sfp and process ////////////////////
+  $display("#########Starting movement from pmem to sfp and processing#########");
+  
+  for(q=0;q<total_cycle;q=q+1) begin
+    #0.5 clk = 1'b0;
+    acc = 1;
+    pmem_rd = 1;
+    
+    if(q>0) begin
+      pmem_add = pmem_add + 1;
+    end
+
+    #0.5 clk = 1'b1;
+  end
+
+  #0.5 clk = 1'b0;  
+  pmem_rd = 0; ofifo_rd = 0;
+  #0.5 clk = 1'b1;
+  #0.5 clk = 1'b0;
+
+  #0.5 clk = 1'b1;
+  #0.5 clk = 1'b0;
+  #0.5 clk = 1'b1;
+  #0.5 clk = 1'b0;
+  for(q=0;q<total_cycle+3;q=q+1) begin
+    #0.5 clk = 1'b0;
+    fifo_ext_rd = 1'b1;
+    
+    //fifo_out[q] = sum_out;
+    $display("%6h", sum_out);
+    #0.5 clk = 1'b1;
+  end
 
   #10 $finish;
 
