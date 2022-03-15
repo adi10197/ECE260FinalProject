@@ -20,7 +20,7 @@ reg sync1_0, sync1_1, sync1_2;
 wire canRead_0, canRead_1;
 
 // out of the cores
-wire [bw-1:0] sum_out_0, sum_out_1;
+wire [(bw_psum+4)-1:0] sum_out_0, sum_out_1;
 
 core #(.bw(bw), .bw_psum(bw_psum), .col(col), .pr(pr)) core_instance_0 (
       .reset(reset), 
