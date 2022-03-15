@@ -1,6 +1,6 @@
 // Created by prof. Mingu Kang @VVIP Lab in UCSD ECE department
 // Please do not spread this code without permission 
-module fullchip (clk, mem_in, inst, reset, div, acc, fifo_ext_rd, sum_out);
+module fullchip (clk, mem_in, inst, reset, div, acc, fifo_ext_rd, sum_out, sfp_out);
 
 parameter col = 8;
 parameter bw = 8;
@@ -16,7 +16,7 @@ input  acc;
 input  fifo_ext_rd;
 
 output [bw_psum+3 : 0] sum_out;
-
+output [bw_psum*col-1:0] sfp_out;
 
 core #(.bw(bw), .bw_psum(bw_psum), .col(col), .pr(pr)) core_instance (
       .reset(reset), 
@@ -26,7 +26,8 @@ core #(.bw(bw), .bw_psum(bw_psum), .col(col), .pr(pr)) core_instance (
       .div(div),
       .acc(acc),
       .fifo_ext_rd(fifo_ext_rd),
-      .sum_out(sum_out)
+      .sum_out(sum_out),
+      .out(sfp_out)
 );
 
 endmodule

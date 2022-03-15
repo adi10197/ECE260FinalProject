@@ -93,6 +93,8 @@ module sfp_row (clk, acc, div, fifo_ext_rd, sum_in, sum_out, sfp_in, sfp_out);
       fifo_wr <= 0;
     end
     else begin
+       $display("printing sum2core here");
+       $display("%10h", sum_2core);
        div_q <= div ;
        if (acc) begin
       

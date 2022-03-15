@@ -46,6 +46,7 @@ reg [3:0] qkmem_add = 0;
 reg [3:0] pmem_add = 0;
 reg acc, div, fifo_ext_rd;
 
+wire [bw_psum*col-1:0] sfp_out;
 
 assign inst[16] = ofifo_rd;
 assign inst[15:12] = qkmem_add;
@@ -72,7 +73,8 @@ fullchip #(.bw(bw), .bw_psum(bw_psum), .col(col), .pr(pr)) fullchip_instance (
       .div(div),
       .acc(acc),
       .fifo_ext_rd(fifo_ext_rd),
-      .sum_out(sum_out)
+      .sum_out(sum_out),
+      .sfp_out(sfp_out)
 );
 
 
@@ -391,22 +393,42 @@ $display("##### move ofifo to pmem #####");
   end
 
   #0.5 clk = 1'b0;  
-  pmem_rd = 0; ofifo_rd = 0;
+  pmem_rd = 0; ofifo_rd = 0; pmem_add = 0; acc = 0;
+ 
   #0.5 clk = 1'b1;
-  #0.5 clk = 1'b0;
 
-  #0.5 clk = 1'b1;
-  #0.5 clk = 1'b0;
-  #0.5 clk = 1'b1;
-  #0.5 clk = 1'b0;
-  for(q=0;q<total_cycle+3;q=q+1) begin
+  for(q=0;q<total_cycle+2;q=q+1) begin
     #0.5 clk = 1'b0;
     fifo_ext_rd = 1'b1;
     
-    //fifo_out[q] = sum_out;
-    $display("%6h", sum_out);
+    fifo_out[q] = sum_out;
+    $display("%5h", sum_out);
+    // $display("%5h", fifo_out[q]);
     #0.5 clk = 1'b1;
   end
+
+  for(q=0;q<total_cycle + 10;q=q+1) begin
+    #0.5 clk = 1'b0;
+    div = 1;
+    pmem_rd = 1;
+    
+    if(q>0) begin
+      pmem_add = pmem_add + 1;
+
+    end
+    $display("%40h", sfp_out);
+    #0.5 clk = 1'b1;
+  end
+  
+  // for(q=0;q<total_cycle+1;q=q+1) begin
+  //   #0.5 clk = 1'b0;
+  //   // fifo_ext_rd = 1'b1;
+  //   // fifo_out[q] = sum_out;
+  //   $display("%40h", sfp_out);
+  //   $display("%5h", fifo_out[q]);
+  //   #0.5 clk = 1'b1;
+  // end
+  
 
   #10 $finish;
 
