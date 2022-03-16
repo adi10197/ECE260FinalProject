@@ -27,6 +27,7 @@ integer  Q[total_cycle-1:0][pr-1:0];
 integer  result[total_cycle-1:0][col-1:0];
 integer  sum[total_cycle-1:0];
 integer  fifo_out[total_cycle-1:0];
+integer  result_div[total_cycle-1:0][col-1:0]; 
 integer i,j,k,t,p,q,s,u, m;
 
 reg reset = 1;
@@ -172,16 +173,40 @@ $display("##### Estimated multiplication result #####");
          for (k=0; k<pr; k=k+1) begin
             result[t][q] = result[t][q] + Q[t][k] * K[q][k];
          end
+     end
+  end  
+  for (t=0; t<total_cycle; t=t+1) begin
+    sum[t]=0;
+     for (q=0; q<col; q=q+1) begin
+        if (result[t][q] > 0) begin
+          sum[t] = sum[t] + result[t][q];
+        end
+        else begin
+          sum[t] = sum[t] - result[t][q];
+        end
+     end  
+  end
 
-         temp5b = result[t][q];
+  for (t=0; t<total_cycle; t=t+1) begin
+     for (q=0; q<col; q=q+1) begin
+         $display("input at %d row and %d column is %5h", t, q, result[t][q]);
+         result_div[t][q] = (result[t][q]<<8)/sum[t];
+         $display("output at %d row and %d column is %5h", t, q, result_div[t][q]);
+         temp5b = result_div[t][q];
          temp16b = {temp16b[139:0], temp5b};
      end
-
-     //$display("%d %d %d %d %d %d %d %d", result[t][0], result[t][1], result[t][2], result[t][3], result[t][4], result[t][5], result[t][6], result[t][7]);
-     $display("prd @cycle%2d: %40h", t, temp16b);
+   
+    //  $display("prd @cycle%2d: %40h", t, temp16b);
   end
 
 //////////////////////////////////////////////
+
+
+// for(t = 0; t < total_cycle; t = t + 1) begin
+//   for(q = 0; q < col; q = q + 1) begin
+//     $display("%d", result[t][q]);
+//   end
+// end
 
 
 
@@ -378,7 +403,7 @@ $display("##### move ofifo to pmem #####");
 //   end
 
 ////////////////// move from pmem to sfp and process ////////////////////
-  $display("#########Starting movement from pmem to sfp and processing#########");
+  // $display("#########Starting movement from pmem to sfp and processing#########");
   
   for(q=0;q<total_cycle + 1;q=q+1) begin
     #0.5 clk = 1'b0;
@@ -402,7 +427,7 @@ $display("##### move ofifo to pmem #####");
     fifo_ext_rd = 1'b1;
     
     fifo_out[q] = sum_out;
-    $display("%5h", sum_out);
+    // $display("%5h", sum_out);
     // $display("%5h", fifo_out[q]);
     #0.5 clk = 1'b1;
   end
@@ -412,15 +437,17 @@ $display("##### move ofifo to pmem #####");
   for(q=0;q<total_cycle + 1;q=q+1) begin
     #0.5 clk = 1'b0;
     div = 1;
+    #0.5 clk = 1'b1;
+    #0.5 clk = 1'b0;
     pmem_rd = 1;
-    #0.5 clk =1'b1;
-    #0.5 clk = 1'b0;
-    div = 0;
+    // #0.5 clk =1'b1;
+    // #0.5 clk = 1'b0;
+    // div = 0;
 
-    #0.5 clk =1'b1;
-    #0.5 clk = 1'b0;
-    #0.5 clk =1'b1;
-    #0.5 clk = 1'b0;
+    // #0.5 clk =1'b1;
+    // #0.5 clk = 1'b0;
+    // #0.5 clk =1'b1;
+    // #0.5 clk = 1'b0;
         // if((q%4)==0)
         // begin
         // div=1;
