@@ -380,7 +380,7 @@ $display("##### move ofifo to pmem #####");
 ////////////////// move from pmem to sfp and process ////////////////////
   $display("#########Starting movement from pmem to sfp and processing#########");
   
-  for(q=0;q<total_cycle;q=q+1) begin
+  for(q=0;q<total_cycle + 1;q=q+1) begin
     #0.5 clk = 1'b0;
     acc = 1;
     pmem_rd = 1;
@@ -407,10 +407,29 @@ $display("##### move ofifo to pmem #####");
     #0.5 clk = 1'b1;
   end
 
-  for(q=0;q<total_cycle + 10;q=q+1) begin
+
+  $display("Giving div signal here");
+  for(q=0;q<total_cycle + 1;q=q+1) begin
     #0.5 clk = 1'b0;
     div = 1;
     pmem_rd = 1;
+    #0.5 clk =1'b1;
+    #0.5 clk = 1'b0;
+    div = 0;
+
+    #0.5 clk =1'b1;
+    #0.5 clk = 1'b0;
+    #0.5 clk =1'b1;
+    #0.5 clk = 1'b0;
+        // if((q%4)==0)
+        // begin
+        // div=1;
+        // // $display("abc");
+        // end
+        // else
+        // div=0;
+    
+    
     
     if(q>0) begin
       pmem_add = pmem_add + 1;
@@ -418,6 +437,7 @@ $display("##### move ofifo to pmem #####");
     end
     $display("%40h", sfp_out);
     #0.5 clk = 1'b1;
+
   end
   
   // for(q=0;q<total_cycle+1;q=q+1) begin
@@ -428,7 +448,10 @@ $display("##### move ofifo to pmem #####");
   //   $display("%5h", fifo_out[q]);
   //   #0.5 clk = 1'b1;
   // end
-  
+   #0.5 clk = 1'b0;  
+  pmem_rd = 0; div = 0; pmem_add = 0;
+ 
+  #0.5 clk = 1'b1;
 
   #10 $finish;
 

@@ -93,8 +93,8 @@ module sfp_row (clk, acc, div, fifo_ext_rd, sum_in, sum_out, sfp_in, sfp_out);
       fifo_wr <= 0;
     end
     else begin
-       $display("printing sum2core here");
-       $display("%10h", sum_2core);
+      //  $display("printing sum2core here");
+      //  $display("%10h", sum_2core);
        div_q <= div ;
        if (acc) begin
       
@@ -113,14 +113,15 @@ module sfp_row (clk, acc, div, fifo_ext_rd, sum_in, sum_out, sfp_in, sfp_out);
          fifo_wr <= 0;
    
          if (div) begin
-           sfp_out_sign0 <= sfp_in_sign0 / sum_2core;
-           sfp_out_sign1 <= sfp_in_sign1 / sum_2core;
-           sfp_out_sign2 <= sfp_in_sign2 / sum_2core;
-           sfp_out_sign3 <= sfp_in_sign3 / sum_2core;
-           sfp_out_sign4 <= sfp_in_sign4 / sum_2core;
-           sfp_out_sign5 <= sfp_in_sign5 / sum_2core;
-           sfp_out_sign6 <= sfp_in_sign6 / sum_2core;
-           sfp_out_sign7 <= sfp_in_sign7 / sum_2core;
+           //This is something that needs to be verified
+           sfp_out_sign0 <= {sfp_in_sign0, 8'b00000000} / sum_2core;
+           sfp_out_sign1 <= {sfp_in_sign1, 8'b00000000} / sum_2core;
+           sfp_out_sign2 <= {sfp_in_sign2, 8'b00000000} / sum_2core;
+           sfp_out_sign3 <= {sfp_in_sign3, 8'b00000000} / sum_2core;
+           sfp_out_sign4 <= {sfp_in_sign4, 8'b00000000} / sum_2core;
+           sfp_out_sign5 <= {sfp_in_sign5, 8'b00000000} / sum_2core;
+           sfp_out_sign6 <= {sfp_in_sign6, 8'b00000000} / sum_2core;
+           sfp_out_sign7 <= {sfp_in_sign7, 8'b00000000} / sum_2core;
 
 
 
