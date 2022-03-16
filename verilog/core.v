@@ -50,7 +50,7 @@ assign pmem_rd = inst[1];
 assign pmem_wr = inst[0];
 
 assign mac_in  = inst[6] ? kmem_out : qmem_out;
-assign pmem_in = fifo_out;
+assign pmem_in = inst[16] ? fifo_out : sfp_out;
 
 assign out = sfp_out;
 
