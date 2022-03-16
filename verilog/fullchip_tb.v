@@ -1,6 +1,9 @@
 // Created by prof. Mingu Kang @VVIP Lab in UCSD ECE department
 // Please do not spread this code without permission 
 
+
+// TODO: CHANGES TO FLOATING POINT REPRESENTATIONS WHILE READING FROM PYTHON FILE AND PRECISION
+
 `timescale 1ns/1ps
 
 module fullchip_tb;
@@ -16,6 +19,8 @@ integer qk_scan_file ; // file handler
 
 
 integer  captured_data;
+real captured_data_real;
+real captured_data_real_1;
 integer  weight [col*pr-1:0];
 `define NULL 0
 
@@ -25,6 +30,11 @@ integer  weight [col*pr-1:0];
 integer  K[2*col-1:0][pr-1:0];
 integer  Q[total_cycle-1:0][pr-1:0];
 integer  result[total_cycle-1:0][col-1:0];
+integer  result_single_core_no_normalisation[total_cycle-1:0][col-1:0];
+real  result_single_core_normalisation[total_cycle-1:0][col-1:0];
+real  result_dual_core_normalisation[total_cycle-1:0][2*col-1:0];
+
+
 integer  sum[total_cycle-1:0];
 
 integer i,j,k,t,p,q,s,u, m;
@@ -181,11 +191,48 @@ $display("##### K core_1 data txt reading #####");
 
 /////////////// Estimated result printing /////////////////
 
+///// Estimated result single core no normalisation txt reading /////
+
+$display("##### Result single core normalisation txt reading #####");
+
+
+  qk_file = $fopen("result_single_core_no_normalisation.txt", "r");
+  qk_file_1 = $fopen("result_single_core_normalisation.txt", "r");
+
+  for (q=0; q<total_cycle; q=q+1) begin
+    for (j=0; j<col; j=j+1) begin
+          qk_scan_file = $fscanf(qk_file, "%d\n", captured_data_real);
+          qk_scan_file_1 = $fscanf(qk_file_1, "%d\n", captured_data_real_1);
+
+          result_single_core_no_normalisation[q][j] = captured_data_real;
+          result_single_core_normalisation[q][j] = captured_data_real_1;
+
+          //$display("%d\n", K[q][j]);
+    end
+  end
+
+  $display("##### Result dual core no normalisation txt reading #####");
+
+
+  qk_file = $fopen("result_dual_core_normalisation.txt", "r");
+
+  for (q=0; q<total_cycle; q=q+1) begin
+    for (j=0; j<2*col; j=j+1) begin
+          qk_scan_file = $fscanf(qk_file, "%d\n", captured_data_real);
+
+          result_dual_core_normalisation[q][j] = captured_data_real;
+
+          //$display("%d\n", K[q][j]);
+    end
+  end
+/////////////////////////////////
+/////////////////////////////////
+
 
 $display("##### Estimated multiplication result #####");
 
   for (t=0; t<total_cycle; t=t+1) begin
-     for (q=0; q<col; q=q+1) begin
+     for (q=0; q<2*col; q=q+1) begin
        result[t][q] = 0;
      end
   end
