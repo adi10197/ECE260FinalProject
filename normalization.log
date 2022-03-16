@@ -1,0 +1,46 @@
+VCD info: dumpfile fullchip_tb.vcd opened for output.
+##### Q data txt reading #####
+##### K data txt reading #####
+##### Estimated multiplication result #####
+prd @cycle 0: 02aa40843b024a2fa42b02d43f812801d02ffb93
+prd @cycle 1: fbdcffbef7f4e02fd23b01033030b0f56fefddef
+prd @cycle 2: fa2a9ff64af8838fa490fbc71ffeedf3cbd03032
+prd @cycle 3: fe819f6c6d0187e028d0051cffec71078c7fb5b0
+prd @cycle 4: fa6b5fb665fb7e900e7bfee2205346fb856ff93e
+prd @cycle 5: ff69efa1e5069d4f86f3fbe62fc48f09417fe940
+prd @cycle 6: 00570fd8c90536df928f092f1fa99100313f5d1f
+prd @cycle 7: fef09fd890fec460850cfaed3020c700b1a02e53
+##### Qmem writing  #####
+##### Kmem writing #####
+##### K data loading to processor #####
+##### execute #####
+##### move ofifo to pmem #####
+Memory write to PSUM mem add 0 02aa40843b024a2fa42b02d43f812801d02ffb93 
+Memory write to PSUM mem add 1 fbdcffbef7f4e02fd23b01033030b0f56fefddef 
+Memory write to PSUM mem add 2 fa2a9ff64af8838fa490fbc71ffeedf3cbd03032 
+Memory write to PSUM mem add 3 fe819f6c6d0187e028d0051cffec71078c7fb5b0 
+Memory write to PSUM mem add 4 fa6b5fb665fb7e900e7bfee2205346fb856ff93e 
+Memory write to PSUM mem add 5 ff69efa1e5069d4f86f3fbe62fc48f09417fe940 
+Memory write to PSUM mem add 6 00570fd8c90536df928f092f1fa99100313f5d1f 
+Memory write to PSUM mem add 7 fef09fd890fec460850cfaed3020c700b1a02e53 
+#########Starting movement from pmem to sfp and processing#########
+xxxxxx
+01fce0
+026ef3
+02725c
+02153d
+01ad08
+027244
+027cd9
+017c8e
+xxxxxx
+Giving div signal here
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+0000a0002100009fffe90000bfffe100007fffff
+ffff3ffff3fffdcffff7000030000afffdeffff9
+fffedffffffffe8fffeeffff300000fffd900009
+ffffbfffdd000050000900013ffffc0001dfffef
+fffe6fffebfffeb00004ffffb00018fffebffffe
+ffffffffed00015fffe8ffff3ffff40001effffc
+00001ffff900010fffea0001dfffef00000fffe0
+ffffbffff3ffffa0002cfffe50000b000030000f
