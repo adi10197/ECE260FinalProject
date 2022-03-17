@@ -1,6 +1,6 @@
 // Created by prof. Mingu Kang @VVIP Lab in UCSD ECE department
 // Please do not spread this code without permission 
-module core (clk, sum_out, mem_in, out, inst, reset, div, acc, fifo_ext_rd, canRead, sum_in, otherCoreClk, otherFifo_ext_rd);
+module core (core_number, clk, sum_out, mem_in, out, inst, reset, div, acc, fifo_ext_rd, canRead, sum_in, otherCoreClk, otherFifo_ext_rd);
 
 parameter col = 8;
 parameter bw = 8;
@@ -19,6 +19,7 @@ input  div;
 input  acc;
 input  fifo_ext_rd;
 input  [bw_psum+3:0] sum_in;
+input  core_number;
 input  otherCoreClk;
 output otherFifo_ext_rd;
 
@@ -109,7 +110,7 @@ sram_w16 #(.sram_bit(col*bw_psum)) psum_mem_instance (
 
 sfp_row #(.bw(bw), .bw_psum(bw_psum), .col(col)) sft_instance(
         .clk(clk),
-        .otherClk(otherCoreClk) 
+        .otherClk(otherCoreClk), 
         .acc(acc), 
         .div(div), 
         .fifo_ext_rd(fifo_ext_rd),
@@ -122,11 +123,11 @@ sfp_row #(.bw(bw), .bw_psum(bw_psum), .col(col)) sft_instance(
   //////////// For printing purpose ////////////
   always @(posedge clk) begin
          if(pmem_wr) begin
-           $display("Memory write to PSUM mem add %x %x ", pmem_add, pmem_in); 
+           $display("Core %b: Memory write to PSUM mem add %x %x ", core_number, pmem_add, pmem_in); 
          end
-        // if(pmem_rd) begin
-        //   $display("Memory read from PSUM mem add %x %x", pmem_add, pmem_out);
-        // end
+        if(qmem_rd) begin
+          $display("Core %b: Memory read from PSUM mem add %x %x", core_number, qkmem_add, mem_in);
+        end
   end
 
 

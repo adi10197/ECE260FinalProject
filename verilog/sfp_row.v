@@ -84,7 +84,7 @@ module sfp_row (clk, otherClk, acc, div, fifo_ext_rd, sum_in, sum_out, sfp_in, s
      .out(sum_this_core), 
      .rd(div_q), 
      .wr(fifo_wr), 
-     .reset(reset),
+     .reset(reset)
   );
 
   fifo_depth16 #(.bw(bw_psum+4)) fifo_inst_ext (

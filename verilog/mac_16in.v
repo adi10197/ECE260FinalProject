@@ -20,7 +20,7 @@ wire		[2*bw-1:0]	product5	;
 wire		[2*bw-1:0]	product6	;
 wire		[2*bw-1:0]	product7	;
 wire		[2*bw-1:0]	product8	;
-wire	[2*bw-1:0]	product9	;
+wire		[2*bw-1:0]	product9	;
 wire		[2*bw-1:0]	product10	;
 wire		[2*bw-1:0]	product11	;
 wire		[2*bw-1:0]	product12	;
