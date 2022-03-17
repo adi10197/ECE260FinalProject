@@ -97,14 +97,14 @@ module sfp_row (clk, otherClk, acc, div, fifo_ext_rd, sum_in, sum_out, sfp_in, s
      .reset(reset)
   );
 
-  assign sfp_in0 = {sfp_in_sign0, 8'h00};
-  assign sfp_in1 = {sfp_in_sign1, 8'h00};
-  assign sfp_in2 = {sfp_in_sign2, 8'h00};
-  assign sfp_in3 = {sfp_in_sign3, 8'h00};
-  assign sfp_in4 = {sfp_in_sign4, 8'h00};
-  assign sfp_in5 = {sfp_in_sign5, 8'h00};
-  assign sfp_in6 = {sfp_in_sign6, 8'h00};
-  assign sfp_in7 = {sfp_in_sign7, 8'h00};
+  assign sfp_in0 = {sfp_in_sign0, 12'h00};
+  assign sfp_in1 = {sfp_in_sign1, 12'h00};
+  assign sfp_in2 = {sfp_in_sign2, 12'h00};
+  assign sfp_in3 = {sfp_in_sign3, 12'h00};
+  assign sfp_in4 = {sfp_in_sign4, 12'h00};
+  assign sfp_in5 = {sfp_in_sign5, 12'h00};
+  assign sfp_in6 = {sfp_in_sign6, 12'h00};
+  assign sfp_in7 = {sfp_in_sign7, 12'h00};
 
   always @ (posedge clk) begin
     if (reset) begin

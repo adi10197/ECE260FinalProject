@@ -123,13 +123,15 @@ sfp_row #(.bw(bw), .bw_psum(bw_psum), .col(col)) sft_instance(
   //////////// For printing purpose ////////////
   always @(posedge clk) begin
          if(pmem_wr) begin
-           $display("Core %b: Memory write to PSUM mem add %x %x ", core_number, pmem_add, pmem_in); 
+           $display("Core %b: Memory write to PSUM mem add %x %40h ", core_number, pmem_add, pmem_in); 
          end
-        if(qmem_rd) begin
-          $display("Core %b: Memory read from PSUM mem add %x %x", core_number, qkmem_add, mem_in);
-        end
+        // if(qmem_rd) begin
+        //   $display("Core %b: Memory read from PSUM mem add %x %x", core_number, qkmem_add, mem_in);
+        // end
+        //  if(kmem_wr) begin
+        //    $display("Core %b: Memory write to kmem add %x %x ", core_number, qkmem_add, mem_in); 
+        //  end
   end
-
 
 
 endmodule

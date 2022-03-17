@@ -9,7 +9,7 @@ parameter total_cycle = 8;   // how many streamed Q vectors will be processed
 parameter bw = 8;            // Q & K vector bit precision
 parameter bw_psum = 2*bw+4;  // partial sum bit precision
 parameter pr = 16;           // how many products added in each dot product 
-parameter col = 16;           // how many dot product units are equipped
+parameter col = 8;           // how many dot product units are equipped
 
 integer qk_file ; // file handler
 integer qk_scan_file ; // file handler
@@ -22,12 +22,12 @@ integer  weight [col*pr-1:0];
 
 
 
-integer  K[col-1:0][pr-1:0];
+integer  K[2*col-1:0][pr-1:0];
 integer  Q[total_cycle-1:0][pr-1:0];
-integer  result[total_cycle-1:0][col-1:0];
+integer  result[total_cycle-1:0][2*col-1:0];
 integer  sum[total_cycle-1:0];
 integer  fifo_out[total_cycle-1:0];
-integer  result_div[total_cycle-1:0][col-1:0]; 
+integer  result_div[total_cycle-1:0][2*col-1:0]; 
 integer  i,j,k,t,p,q,s,u, m;
 integer  result_temp;
 integer  div_temp = 20'h004dd;
@@ -140,7 +140,7 @@ $display("##### K data txt reading #####");
   qk_scan_file = $fscanf(qk_file, "%s\n", captured_data);
   qk_scan_file = $fscanf(qk_file, "%s\n", captured_data);
 
-  for (q=0; q<col/2; q=q+1) begin
+  for (q=0; q<col; q=q+1) begin
     for (j=0; j<pr; j=j+1) begin
           qk_scan_file = $fscanf(qk_file, "%d\n", captured_data);
           K[q][j] = captured_data;
@@ -155,11 +155,12 @@ $display("##### K data txt reading #####");
   qk_scan_file = $fscanf(qk_file, "%s\n", captured_data);
   qk_scan_file = $fscanf(qk_file, "%s\n", captured_data);
 
-  for (q=col/2; q<col; q=q+1) begin
+  for (q=col; q<2*col; q=q+1) begin
     for (j=0; j<pr; j=j+1) begin
           qk_scan_file = $fscanf(qk_file, "%d\n", captured_data);
           K[q][j] = captured_data;
     end
+      
   end
 
 /////////////// Estimated result printing /////////////////
@@ -167,13 +168,13 @@ $display("##### K data txt reading #####");
 $display("##### Estimated multiplication result #####");
 
   for (t=0; t<total_cycle; t=t+1) begin
-     for (q=0; q<col; q=q+1) begin
+     for (q=0; q<2*col; q=q+1) begin
        result[t][q] = 0;
      end
   end
 
   for (t=0; t<total_cycle; t=t+1) begin
-     for (q=0; q<col; q=q+1) begin
+     for (q=0; q<2*col; q=q+1) begin
          for (k=0; k<pr; k=k+1) begin
             result[t][q] = result[t][q] + Q[t][k] * K[q][k];
          end
@@ -181,7 +182,7 @@ $display("##### Estimated multiplication result #####");
   end  
   for (t=0; t<total_cycle; t=t+1) begin
     sum[t]=0;
-     for (q=0; q<col; q=q+1) begin
+     for (q=0; q<2*col; q=q+1) begin
         if (result[t][q] > 0) begin
           sum[t] = sum[t] + result[t][q];
         end
@@ -193,7 +194,7 @@ $display("##### Estimated multiplication result #####");
 
   
   for (t=0; t<total_cycle; t=t+1) begin
-     for (q=0; q<col; q=q+1) begin
+     for (q=0; q<2*col; q=q+1) begin
 
          result_div[t][q] = (result[t][q]<<8)/sum[t][bw_psum +3:7];
          result_temp = (result[t][q]<<8)/div_temp;
@@ -270,11 +271,11 @@ $display("##### Qmem writing  #####");
 
 $display("##### Kmem writing #####");
 
-  for (q=0; q<col/2; q=q+1) begin
+  for (q=0; q<col; q=q+1) begin
 
     #0.5 clk = 1'b0;  
     kmem_wr = 1; if (q>0) qkmem_add = qkmem_add + 1; 
-    
+    // $display(q);
     mem_in_0[1*bw-1:0*bw] = K[q][0];
     mem_in_0[2*bw-1:1*bw] = K[q][1];
     mem_in_0[3*bw-1:2*bw] = K[q][2];
@@ -292,6 +293,23 @@ $display("##### Kmem writing #####");
     mem_in_0[15*bw-1:14*bw] = K[q][14];
     mem_in_0[16*bw-1:15*bw] = K[q][15];
 
+    mem_in_1[1*bw-1:0*bw] = K[q + col][0];
+    mem_in_1[2*bw-1:1*bw] = K[q + col][1];
+    mem_in_1[3*bw-1:2*bw] = K[q + col][2];
+    mem_in_1[4*bw-1:3*bw] = K[q + col][3];
+    mem_in_1[5*bw-1:4*bw] = K[q + col][4];
+    mem_in_1[6*bw-1:5*bw] = K[q + col][5];
+    mem_in_1[7*bw-1:6*bw] = K[q + col][6];
+    mem_in_1[8*bw-1:7*bw] = K[q + col][7];
+    mem_in_1[9*bw-1:8*bw] = K[q + col][8];
+    mem_in_1[10*bw-1:9*bw] = K[q + col][9];
+    mem_in_1[11*bw-1:10*bw] = K[q + col][10];
+    mem_in_1[12*bw-1:11*bw] = K[q + col][11];
+    mem_in_1[13*bw-1:12*bw] = K[q + col][12];
+    mem_in_1[14*bw-1:13*bw] = K[q + col][13];
+    mem_in_1[15*bw-1:14*bw] = K[q + col][14];
+    mem_in_1[16*bw-1:15*bw] = K[q + col][15];
+
     #0.5 clk = 1'b1;  
 
   end
@@ -305,39 +323,6 @@ $display("##### Kmem writing #####");
     #0.5 clk = 1'b0;  
     #0.5 clk = 1'b1;   
   end
-
-
-  for (q=col/2; q<col; q=q+1) begin
-
-    #0.5 clk = 1'b0;  
-    kmem_wr = 1; if (q>8) qkmem_add = qkmem_add + 1; 
-    
-    mem_in_1[1*bw-1:0*bw] = K[q][0];
-    mem_in_1[2*bw-1:1*bw] = K[q][1];
-    mem_in_1[3*bw-1:2*bw] = K[q][2];
-    mem_in_1[4*bw-1:3*bw] = K[q][3];
-    mem_in_1[5*bw-1:4*bw] = K[q][4];
-    mem_in_1[6*bw-1:5*bw] = K[q][5];
-    mem_in_1[7*bw-1:6*bw] = K[q][6];
-    mem_in_1[8*bw-1:7*bw] = K[q][7];
-    mem_in_1[9*bw-1:8*bw] = K[q][8];
-    mem_in_1[10*bw-1:9*bw] = K[q][9];
-    mem_in_1[11*bw-1:10*bw] = K[q][10];
-    mem_in_1[12*bw-1:11*bw] = K[q][11];
-    mem_in_1[13*bw-1:12*bw] = K[q][12];
-    mem_in_1[14*bw-1:13*bw] = K[q][13];
-    mem_in_1[15*bw-1:14*bw] = K[q][14];
-    mem_in_1[16*bw-1:15*bw] = K[q][15];
-
-    #0.5 clk = 1'b1;  
-
-  end
-
-
-  #0.5 clk = 1'b0;  
-  kmem_wr = 0;  
-  qkmem_add = 0;
-  #0.5 clk = 1'b1;  
 ///////////////////////////////////////////
 
 
@@ -353,7 +338,7 @@ $display("##### Kmem writing #####");
 /////  K data loading  /////
 $display("##### K data loading to processor #####");
 
-  for (q=0; q<(col/2)+1; q=q+1) begin
+  for (q=0; q<(2*col)+1; q=q+1) begin
     #0.5 clk = 1'b0;  
     load = 1; 
     if (q==1) kmem_rd = 1;
@@ -483,6 +468,7 @@ $display("##### move ofifo to pmem #####");
     if(q%9 == 1) begin
       canRead_0 = 1;
       canRead_1 = 1;
+      // pmem_rd = 0;
     end
 
     if(q%9 == 2) begin
@@ -513,7 +499,7 @@ $display("##### move ofifo to pmem #####");
   end
 
   #0.5 clk = 1'b0;  
-  pmem_rd = 0; pmem_add = 0; div0 = 0; div1 = 0;
+  pmem_rd = 0; pmem_wr = 0; pmem_add = 0; div0 = 0; div1 = 0;
   #0.5 clk = 1'b1;
 
   // for(q=0;q<total_cycle+2;q=q+1) begin
