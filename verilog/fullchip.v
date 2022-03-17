@@ -1,6 +1,6 @@
 // Created by prof. Mingu Kang @VVIP Lab in UCSD ECE department
 // Please do not spread this code without permission 
-module fullchip (clk0, clk1, mem_in_0, mem_in_1, inst, div0, div1, acc0, acc1, reset);
+module fullchip (clk0, clk1, mem_in_0, mem_in_1, inst, div0, div1, acc0, acc1, reset, canRead_0, canRead_1);
 
 parameter col = 8;
 parameter bw = 8;
@@ -16,7 +16,7 @@ input  reset;
 
 wire sync0, sync1;
 
-wire canRead_0, canRead_1;
+wire canReadSync_0, canReadSync_1;
 
 // out of the cores
 wire [(bw_psum+4)-1:0] sum_out_0, sum_out_1;
@@ -35,9 +35,10 @@ core #(.bw(bw), .bw_psum(bw_psum), .col(col), .pr(pr)) core_instance_0 (
       .otherCoreClk(clk1)
       .sum_in(sum_out_1),
       .fifo_ext_rd(sync0),
+      .canRead(canRead_0),
 
       // additional outputs
-      .otherFifo_ext_rd(canRead_0)
+      .otherFifo_ext_rd(canReadSync_0)
 );
 
 core #(.bw(bw), .bw_psum(bw_psum), .col(col), .pr(pr)) core_instance_1 (
@@ -54,21 +55,22 @@ core #(.bw(bw), .bw_psum(bw_psum), .col(col), .pr(pr)) core_instance_1 (
       .otherCoreClk(clk0)
       .sum_in(sum_out_0),
       .fifo_ext_rd(sync1),
+      .canRead(canRead_1),
 
       // additional outputs
-      .otherFifo_ext_rd(canRead_1)
+      .otherFifo_ext_rd(canReadSync_1)
 );
-
-sync sync0(.clk(clk0), .in(canRead_1), .out(sync0));
 
 sync sync_0 (
       .clk(clk0),
-      .in(canRead_1), 
+      .in(canReadSync_1), 
       .out(sync0)
 );
 
 sync sync_1 (
       .clk(clk1),
-      .in(canRead_0), 
+      .in(canReadSync_0), 
       .out(sync1)
 );
+
+endmodule

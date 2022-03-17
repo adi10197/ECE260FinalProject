@@ -1,6 +1,6 @@
 // Created by prof. Mingu Kang @VVIP Lab in UCSD ECE department
 // Please do not spread this code without permission 
-module core (clk, sum_out, mem_in, out, inst, reset, div, acc, fifo_ext_rd, sum_in, otherCoreClk, otherFifo_ext_rd);
+module core (clk, sum_out, mem_in, out, inst, reset, div, acc, fifo_ext_rd, canRead, sum_in, otherCoreClk, otherFifo_ext_rd);
 
 parameter col = 8;
 parameter bw = 8;
@@ -10,6 +10,7 @@ parameter pr = 16;
 output [bw_psum+3:0] sum_out;
 output [bw_psum*col-1:0] out;
 wire   [bw_psum*col-1:0] pmem_out;
+input  canRead;
 input  [pr*bw-1:0] mem_in;
 input  clk;
 input  [16:0] inst; 
@@ -56,6 +57,8 @@ assign mac_in  = inst[6] ? kmem_out : qmem_out;
 assign pmem_in = inst[16] ? fifo_out : sfp_out;
 
 assign out = pmem_out;
+
+assign otherFifo_ext_rd = canRead; 
 
 mac_array #(.bw(bw), .bw_psum(bw_psum), .col(col), .pr(pr)) mac_array_instance (
         .in(mac_in), 
@@ -105,11 +108,12 @@ sram_w16 #(.sram_bit(col*bw_psum)) psum_mem_instance (
 );
 
 sfp_row #(.bw(bw), .bw_psum(bw_psum), .col(col)) sft_instance(
-        .clk(clk), 
+        .clk(clk),
+        .otherClk(otherCoreClk) 
         .acc(acc), 
         .div(div), 
-        .fifo_ext_rd(fifo_ext_rd), 
-        .sum_in(24'b0), 
+        .fifo_ext_rd(fifo_ext_rd),
+        .sum_in(sum_in), 
         .sum_out(sum_out), 
         .sfp_in(pmem_out), 
         .sfp_out(sfp_out)

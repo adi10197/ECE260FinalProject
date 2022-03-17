@@ -1,6 +1,6 @@
 // Created by prof. Mingu Kang @VVIP Lab in UCSD ECE department
 // Please do not spread this code without permission 
-module sfp_row (clk, otherClk, acc, div, fifo_ext_rd, otherFifo_ext_rd, sum_in, sum_out, sfp_in, sfp_out);
+module sfp_row (clk, otherClk, acc, div, fifo_ext_rd, sum_in, sum_out, sfp_in, sfp_out);
 
   parameter col = 8;
   parameter bw = 8;
@@ -84,7 +84,7 @@ module sfp_row (clk, otherClk, acc, div, fifo_ext_rd, otherFifo_ext_rd, sum_in, 
      .out(sum_this_core), 
      .rd(div_q), 
      .wr(fifo_wr), 
-     .reset(reset)
+     .reset(reset),
   );
 
   fifo_depth16 #(.bw(bw_psum+4)) fifo_inst_ext (
@@ -97,14 +97,14 @@ module sfp_row (clk, otherClk, acc, div, fifo_ext_rd, otherFifo_ext_rd, sum_in, 
      .reset(reset)
   );
 
-assign sfp_in0 = {sfp_in_sign0, 8'h00};
-assign sfp_in1 = {sfp_in_sign1, 8'h00};
-assign sfp_in2 = {sfp_in_sign2, 8'h00};
-assign sfp_in3 = {sfp_in_sign3, 8'h00};
-assign sfp_in4 = {sfp_in_sign4, 8'h00};
-assign sfp_in5 = {sfp_in_sign5, 8'h00};
-assign sfp_in6 = {sfp_in_sign6, 8'h00};
-assign sfp_in7 = {sfp_in_sign7, 8'h00};
+  assign sfp_in0 = {sfp_in_sign0, 8'h00};
+  assign sfp_in1 = {sfp_in_sign1, 8'h00};
+  assign sfp_in2 = {sfp_in_sign2, 8'h00};
+  assign sfp_in3 = {sfp_in_sign3, 8'h00};
+  assign sfp_in4 = {sfp_in_sign4, 8'h00};
+  assign sfp_in5 = {sfp_in_sign5, 8'h00};
+  assign sfp_in6 = {sfp_in_sign6, 8'h00};
+  assign sfp_in7 = {sfp_in_sign7, 8'h00};
 
   always @ (posedge clk) begin
     if (reset) begin
